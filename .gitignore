@@ -1,0 +1,17 @@
+# Build directories
+build/
+out/
+bin/
+
+# Dependency managers
+vcpkg_installed/
+.cache/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
