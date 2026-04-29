@@ -4,7 +4,6 @@ import {
   ChartBarIncreasingIcon,
   CommandIcon,
   LayoutDashboard,
-  Server,
   ServerIcon,
   Shell,
 } from "lucide-react";
@@ -41,7 +40,7 @@ const nav_items = {
     },
     {
       name: "Command Center",
-      path: "/dashboard/command",
+      path: "/dashboard/command-center",
       icon: CommandIcon,
     },
     {
