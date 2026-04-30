@@ -8,16 +8,50 @@
 #include <fstream>
 #include <sstream>
 
-Process::Process(int pid, long Hertz) : pid_(pid), Hertz_(Hertz)
-{
-    std::vector<std::string> cpuNumbers = ReadFile(pid);
 
-    utime_ = stof(cpuNumbers[13]);
-    stime_ = stof(cpuNumbers[14]);
-    cutime_ = stof(cpuNumbers[15]);
-    cstime_ = stof(cpuNumbers[16]);
-    starttime_ = stof(cpuNumbers[21]);
+std::vector<std::string> Process::ReadFile(int pid) {
+    std::ifstream filestream(ParserConstants::ProcDirectory + std::to_string(pid) +
+                             ParserConstants::StatFilename);
+    if (!filestream.is_open()) {
+        return {};
+    }
+
+    std::string line;
+    std::getline(filestream, line);
+
+    auto lparen = line.find('(');
+    auto rparen = line.rfind(')');
+    if (lparen == std::string::npos || rparen == std::string::npos) {
+        return {};
+    }
+
+    std::string pid_str = line.substr(0, lparen - 1);
+    std::string comm    = line.substr(lparen + 1, rparen - lparen - 1);
+
+    std::istringstream iss(line.substr(rparen + 2));
+    std::vector<std::string> fields{std::istream_iterator<std::string>{iss}, {}};
+
+    fields.insert(fields.begin(), comm);
+    fields.insert(fields.begin(), pid_str);
+
+    return fields;
 }
+
+
+Process::Process(int pid, long Hertz) : pid_(pid), Hertz_(Hertz) {
+    auto cpuNumbers = ReadFile(pid);
+    if (cpuNumbers.size() <= 21) {
+        utime_ = stime_ = cutime_ = cstime_ = starttime_ = 0;
+        return;
+    }
+    utime_     = std::stof(cpuNumbers[13]);
+    stime_     = std::stof(cpuNumbers[14]);
+    cutime_    = std::stof(cpuNumbers[15]);
+    cstime_    = std::stof(cpuNumbers[16]);
+    starttime_ = std::stof(cpuNumbers[21]);
+}
+
+
 
 int Process::Pid() { return pid_; }
 
@@ -75,17 +109,3 @@ long int Process::UpTime()
 
     return seconds;
 }
-
-std::vector<std::string> Process::ReadFile(int pid)
-{
-    std::string line, skip;
-
-    std::ifstream filestream(ParserConstants::ProcDirectory + std::to_string(pid) +
-                             ParserConstants::StatFilename);
-
-    std::getline(filestream, line);
-    std::istringstream linestream(line);
-    std::istream_iterator<std::string> beg(linestream), end;
-    std::vector<std::string> cpuNumbers(beg, end);
-    return cpuNumbers;
-};

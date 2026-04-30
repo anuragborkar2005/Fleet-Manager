@@ -1,1 +1,7 @@
-{}
+{
+    "server": "http://localhost:8080",
+    "agent_port": "8081",
+    "metrics_port": "8082",
+    "heartbeat_interval_seconds": 30,
+    "register_timeout_seconds": 10
+}
