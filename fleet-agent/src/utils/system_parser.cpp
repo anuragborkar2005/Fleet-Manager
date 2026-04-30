@@ -1,6 +1,6 @@
-#include "system_parser.hpp"
-#include "parser_constants.hpp"
-#include "parser_helper.hpp"
+#include "utils/system_parser.hpp"
+#include "utils/parser_constants.hpp"
+#include "utils/parser_helper.hpp"
 
 #include <algorithm>
 #include <fstream>
@@ -23,7 +23,7 @@ std::string SystemParser::OperatingSystem()
             {
                 if (key == "PRETTY_NAME")
                 {
-                    std::replace(value.begin(), value.end(), "_", " ");
+                    std::replace(value.begin(), value.end(), '_', ' ');
                     return value;
                 }
             }

@@ -1,4 +1,4 @@
-#include "metrics.hpp"
+#include "metrics/metrics.hpp"
 #include <chrono>
 #include <iostream>
 
@@ -82,7 +82,7 @@ void Metrics::update_loop()
     }
 }
 
-void Metrics::increamentHeartbeat()
+void Metrics::incrementHeartbeat()
 {
     if (heartbeat_counter)
     {

@@ -1,7 +1,6 @@
-#include "system_parser.hpp"
-#include "process.hpp"
-#include "all_processes.hpp"
-#include "system.hpp"
+#include "utils/system_parser.hpp"
+#include "monitor/all_processes.hpp"
+#include "monitor/system.hpp"
 
 #include <string>
 

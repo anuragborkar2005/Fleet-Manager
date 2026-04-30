@@ -1,11 +1,9 @@
 #pragma once
 
-#include "process.hpp"
 #include "all_processes.hpp"
 #include "processor.hpp"
 
 #include <string>
-#include <vector>
 
 class System
 {

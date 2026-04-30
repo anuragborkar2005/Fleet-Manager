@@ -1,11 +1,11 @@
-#include "jwt_validator.hpp"
+#include "utils/jwt_validator.hpp"
 
 #include <exception>
 #include <iostream>
 #include <jwt-cpp/traits/nlohmann-json/defaults.h>
 #include <jwt-cpp/traits/nlohmann-json/traits.h>
 
-bool validate_jwt(const std::string &token, const std::string &secret)
+bool validate_jwt(const std::string& token, const std::string& secret)
 {
     try
     {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "system.hpp"
+#include "monitor/system.hpp"
 
 #include <atomic>
 #include <thread>
@@ -36,5 +36,5 @@ public:
     Metrics(int port);
     ~Metrics();
     void start();
-    void increamentHeartbeat();
+    void incrementHeartbeat();
 };

@@ -1,6 +1,6 @@
-#include "all_processes.hpp"
-#include "process.hpp"
-#include "system_parser.hpp"
+#include "monitor/all_processes.hpp"
+#include "monitor/process.hpp"
+#include "utils/system_parser.hpp"
 
 #include <algorithm>
 #include <unistd.h>

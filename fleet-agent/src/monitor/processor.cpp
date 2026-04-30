@@ -1,5 +1,5 @@
-#include "processor.hpp"
-#include "parser_constants.hpp"
+#include "monitor/processor.hpp"
+#include "utils/parser_constants.hpp"
 
 #include <sstream>
 #include <fstream>

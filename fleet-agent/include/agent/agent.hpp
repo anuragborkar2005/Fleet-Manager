@@ -1,10 +1,10 @@
 #pragma once
-#include "metrics.hpp"
+
+#include "metrics/metrics.hpp"
 
 #include <atomic>
 #include <mutex>
 #include <string>
-#include <memory>
 
 class Agent
 {

@@ -1,8 +1,8 @@
-#include "format.hpp"
-#include "parser_constants.hpp"
-#include "parser_helper.hpp"
-#include "system_parser.hpp"
-#include "process.hpp"
+#include "utils/format.hpp"
+#include "utils/parser_constants.hpp"
+#include "utils/parser_helper.hpp"
+#include "utils/system_parser.hpp"
+#include "monitor/process.hpp"
 
 #include <iterator>
 #include <fstream>

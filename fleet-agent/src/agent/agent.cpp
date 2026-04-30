@@ -1,5 +1,5 @@
-#include "agent.hpp"
-#include "config.hpp"
+#include "agent/agent.hpp"
+#include "utils/config.hpp"
 
 #include <arpa/inet.h>
 #include <chrono>

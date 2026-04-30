@@ -1,7 +1,10 @@
 #pragma once
 
-#include "parser_constants.hpp";
+#include "utils/parser_constants.hpp"
 
+
+#include <fstream>
+#include <sstream>
 #include <string>
 
 namespace ParserHelper
@@ -37,7 +40,7 @@ namespace ParserHelper
         std::ifstream filestream{ParserConstants::ProcDirectory + filename};
         if (filestream.is_open())
         {
-            std::getline(filename, line);
+            std::getline(filestream, line);
             std::istringstream linestream{line};
             linestream >> value;
         }

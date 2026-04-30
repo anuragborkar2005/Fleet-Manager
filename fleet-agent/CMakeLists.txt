@@ -41,4 +41,3 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     prometheus-cpp::util
     ssh
 )
-
