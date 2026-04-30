@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 4.2)
 project(fleet-agent LANGUAGES CXX)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -22,6 +22,7 @@ find_package(CURL CONFIG REQUIRED)
 find_package(jwt-cpp CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(prometheus-cpp CONFIG REQUIRED)
+find_package(libssh CONFIG REQUIRED)
 
 
 add_executable(${PROJECT_NAME}
@@ -38,5 +39,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     prometheus-cpp::core
     prometheus-cpp::pull
     prometheus-cpp::util
+    ssh
 )
 

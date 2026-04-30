@@ -6,7 +6,7 @@
 class Process
 {
 private:
-    int pids_;
+    int pid_;
     long Hertz_;
     float utime_ = 0.0;
     float stime_ = 0.0;

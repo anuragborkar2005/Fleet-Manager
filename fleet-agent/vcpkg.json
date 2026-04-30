@@ -1,7 +1,7 @@
 {
   "name": "fleet-agent",
   "version": "1.0.0",
-  "builtin-baseline": "81e3c888ef717a026eb57bb2f3cb0dbd30246271",
+  "builtin-baseline": "4fc6cb0e9ed24f6abfac825f37aa9c74049f566e",
   "dependencies": [
     {
       "name": "fmt",
@@ -31,6 +31,10 @@
     {
       "name": "curl",
       "version>=": "8.19.0"
+    },
+    {
+      "name": "libssh",
+      "version>=": "0.11.3"
     }
   ]
 }
