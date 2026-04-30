@@ -7,7 +7,7 @@ namespace SystemParser
 {
     float MemoryUtilization();
     long UpTime();
-    std::vector<int> Pids;
+    std::vector<int> Pids();
     int TotalProcesses();
     int RunningProcesses();
     std::string OperatingSystem();
