@@ -10,6 +10,13 @@ json load_config_file(const std::string &filename)
         return json::object();
     }
 
-    json cfg = json::parse(config_file);
-    return cfg;
+    try
+    {
+        json cfg = json::parse(config_file);
+        return cfg;
+    }
+    catch (const json::parse_error &e)
+    {
+        return json::object();
+    }
 }

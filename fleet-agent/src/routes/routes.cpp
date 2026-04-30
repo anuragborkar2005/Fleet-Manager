@@ -24,16 +24,23 @@ void register_routes(crow::SimpleApp &app, Agent &agent)
                                 {
           agent.metrics->incrementHeartbeat();
 
-          auto body = json::parse(req.body);
-          std::string hostname = body.value("hostname", "unknown");
-
-          return crow::response{200, "Heartbeat recorded for " + hostname}; });
+          try {
+            auto body = json::parse(req.body);
+            std::string hostname = body.value("hostname", "unknown");
+            return crow::response{200, "Heartbeat recorded for " + hostname};
+          } catch (const json::parse_error& e) {
+            return crow::response{400, "Invalid JSON"};
+          } });
 
     CROW_ROUTE(app, "/info").methods("POST"_method)([&](const crow::request &req)
                                                     {
-      auto body = json::parse(req.body);
-      std::string hostname = body.value("hostname", "unknown");
-      return crow::response{200, "Received Hostname : " + hostname}; });
+      try {
+        auto body = json::parse(req.body);
+        std::string hostname = body.value("hostname", "unknown");
+        return crow::response{200, "Received Hostname : " + hostname};
+      } catch (const json::parse_error& e) {
+        return crow::response{400, "Invalid JSON"};
+      } });
 
     CROW_ROUTE(app, "/api/metrics")
     ([&]()

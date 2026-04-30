@@ -137,8 +137,26 @@ void Agent::register_node()
 
     if (res == CURLE_OK)
     {
-        auto data = json::parse(response);
-        std::cout << "[Agent] Registered Successfully\n";
+        long http_code = 0;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+        if (http_code == 200)
+        {
+            try
+            {
+                auto data = json::parse(response);
+                std::cout << "[Agent] Registered Successfully\n";
+            }
+            catch (const json::parse_error &e)
+            {
+                std::cerr << "[Agent] JSON Parse Error during registration: " << e.what() << "\n";
+                std::cerr << "[Agent] Response was: " << response << "\n";
+            }
+        }
+        else
+        {
+            std::cerr << "[Agent] Registration failed with HTTP code: " << http_code << "\n";
+            std::cerr << "[Agent] Response was: " << response << "\n";
+        }
     }
     else
     {
@@ -164,8 +182,22 @@ void Agent::send_heartbeat()
         CURLcode res = curl_easy_perform(curl);
         if (res == CURLE_OK)
         {
-            std::cout << "Heartbeat sent\n";
+            long http_code = 0;
+            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+            if (http_code == 200)
+            {
+                std::cout << "Heartbeat sent\n";
+            }
+            else
+            {
+                std::cerr << "Heartbeat failed with HTTP code: " << http_code << "\n";
+            }
         }
+        else
+        {
+            std::cerr << "Heartbeat Curl failed: " << curl_easy_strerror(res) << "\n";
+        }
+        curl_easy_cleanup(curl);
     }
 }
 
