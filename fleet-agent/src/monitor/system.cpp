@@ -17,3 +17,5 @@ std::string System::OperatingSystem() { return SystemParser::OperatingSystem(); 
 int System::RunningProcesses() { return SystemParser::RunningProcesses(); }
 
 int System::TotalProcesses() { return SystemParser::TotalProcesses(); }
+
+long int System::UpTime() { return SystemParser::UpTime(); }
