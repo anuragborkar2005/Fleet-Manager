@@ -1,13 +1,17 @@
+#include "agent/agent.hpp"
+#include "routes/routes.hpp"
 #include <crow.h>
-#include <fmt/core.h>
+#include <iostream>
 
 int main() {
     crow::SimpleApp app;
+    Agent agent;
 
-    CROW_ROUTE(app, "/health")([](){
-        return "Fleet Agent is healthy";
-    });
+    int port = agent.get_port();
+    std::cout << "[Main] Starting agent on port " << port << std::endl;
 
-    fmt::print("Starting Fleet Agent on port 8081...\n");
-    app.port(8081).multithreaded().run();
+    agent.start_registration_and_heartbeat();
+
+    register_routes(app, agent);
+    app.port(port).multithreaded().run();
 }
