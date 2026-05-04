@@ -1,1 +1,13 @@
-{}
+{
+    "server": {
+        "port": 8080,
+        "host": "0.0.0.0"
+    },
+    "database": {
+        "type": "sqlite",
+        "path": "fleet.db"
+    },
+    "jwt": {
+        "secret": "e289cb95490b63aa506956ca65e6da6d6e5a9f2d65b6f8caf500854ecbb636c0137ada594a61bd9120f864902999916d8c8f36d95ffb32c595bece41496014ed"
+    }
+}

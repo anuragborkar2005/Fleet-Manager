@@ -1,10 +1,11 @@
 #include "services/db_service.hpp"
 #include <SQLiteCpp/Database.h>
+#include <SQLiteCpp/Statement.h>
 #include <iostream>
 #include <memory>
 
 
-DBService::DBService(const nlohmann::json &config) : config_{config} {}
+DBService::DBService(const nlohmann::json &config) : config_(config) {}
 
 void DBService::init() {
   std::string db_path = config_["database"]["path"].get<std::string>();
@@ -15,7 +16,7 @@ void DBService::init() {
 
   db_->exec(R"(
       CREATE TABLE IF NOT EXISTS nodes(
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         hostname TEXT NOT NULL,
         ip TEXT NOT NULL,
         os TEXT,
@@ -43,21 +44,22 @@ void DBService::init() {
 }
 
 
-void DBService::register_node(const nlohmann::json &info) {
-    SQLite::Statement query(*db_, "INSERT OR REPLACE INTO nodes (id, hostname, "
-                                "ip, os, agent_version, specs) "
-                                "VALUES(?, ?, ?, ?, ?, ?)");
-    std::string node_id = info["hostname"].get<std::string>();
+std::string DBService::register_node(const nlohmann::json &info) {
+    SQLite::Statement query(*db_,
+        "INSERT INTO nodes (hostname, ip, os, agent_version, specs) VALUES (?, ?, ?, ?, ?)");
 
-    query.bind(1, node_id);
-    query.bind(2, info["hostname"].get<std::string>());
-    query.bind(3, info["ip"].get<std::string>());
-    query.bind(4, info.value("os", "linux"));
-    query.bind(5, info.value("agent_version", "1.0.0"));
-    query.bind(6, info.dump());
+    query.bind(1, info["hostname"].get<std::string>());
+    query.bind(2, info["ip"].get<std::string>());
+    query.bind(3, info.value("os", "linux"));
+    query.bind(4, info.value("agent_version", "1.0.0"));
+    query.bind(5, info.dump());
 
     query.exec();
+
+    auto node_id = db_->getLastInsertRowid();
+    return std::to_string(node_id);
 }
+
 
 void DBService::update_heartbeat(const std::string &node_id) {
     SQLite::Statement query(*db_, "UPDATE nodes SET last_heartbeat = CURRENT_TIMESTAMP, status = 'online' WHERE id = ?");
@@ -65,7 +67,7 @@ void DBService::update_heartbeat(const std::string &node_id) {
     query.exec();
 }
 
-std::vector<nlohmann::json> DBService::get_active_node() {
+std::vector<nlohmann::json> DBService::get_active_nodes() {
     std::vector<nlohmann::json> nodes;
     SQLite::Statement query(*db_, "SELECT id, hostname, ip, os, agent_version, specs FROM nodes WHERE last_heartbeat > datetime('now', '-5 minutes')");
 
@@ -81,6 +83,30 @@ std::vector<nlohmann::json> DBService::get_active_node() {
     }
     return nodes;
 }
+
+nlohmann::json DBService::get_node_by_id(const std::string& node_id) {
+    SQLite::Statement query(*db_, "SELECT ip FROM nodes WHERE id = ?;");
+    query.bind(1, node_id);
+    if (query.executeStep()) {
+        nlohmann::json node;
+        node["ip"] = query.getColumn(0).getString();
+        return node;
+    }
+    return {};
+}
+
+std::string DBService::get_id_by_hostname(const std::string &hostname) {
+    SQLite::Statement query(*db_, "SELECT id FROM nodes WHERE hostname = ?");
+    query.bind(1, hostname);
+
+    if (query.executeStep()) {
+        int id = query.getColumn(0).getInt();
+        return std::to_string(id);
+    }
+
+    return "";
+}
+
 
 void DBService::log_command(const std::string &node_id, const std::string &command,
                            int exit_code, const std::string &stdout_str,

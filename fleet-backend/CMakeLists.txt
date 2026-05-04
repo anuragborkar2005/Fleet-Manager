@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.2)
+cmake_minimum_required(VERSION 3.22)
 project(fleet-backend LANGUAGES CXX)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -8,19 +8,24 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(include)
 include_directories(src)
 
+file(GLOB_RECURSE HEADER_FILES "include/*hpp")
 file(GLOB_RECURSE CPP_SOURCES "src/*.cpp")
-file(GLOB_RECURSE HEADER_FILES "src/*.hpp")
 
 # Enable vcpkg integration automatically
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        CACHE STRING "")
+    if(DEFINED ENV{VCPKG_ROOT})
+        set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            CACHE STRING "")
+    else()
+        message(FATAL_ERROR "VCPKG_ROOT environment variable not set. Please set it to your vcpkg installation path.")
+    endif()
 endif()
 
 find_package(fmt CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(Crow CONFIG REQUIRED)
 find_package(libssh CONFIG REQUIRED)
+find_package(CURL CONFIG REQUIRED)
 find_package(SQLiteCpp CONFIG REQUIRED)
 find_package(jwt-cpp CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
@@ -30,9 +35,6 @@ add_executable(${PROJECT_NAME}
     ${HEADER_FILES}
 )
 
-
-
-
 target_link_libraries(${PROJECT_NAME} PRIVATE
     fmt::fmt
     spdlog::spdlog
@@ -41,4 +43,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ssh
     jwt-cpp::jwt-cpp
     nlohmann_json::nlohmann_json
+    CURL::libcurl
 )

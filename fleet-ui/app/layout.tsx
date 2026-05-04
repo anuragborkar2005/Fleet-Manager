@@ -1,31 +1,37 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import AppProvider from "@/providers/app-providers";
 
 const inter = Inter({
-  subsets: ["latin"],
+    subsets: ["latin"],
+    variable: "--font-sans",
+});
+
+const jetbrains_mono = JetBrains_Mono({
+    subsets: ["latin"],
+    variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
-  title: "Fleet Manager",
-  description: "Linux Fleet Management Software",
+    title: "Fleet Manager",
+    description: "Linux Fleet Management Software",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html
-      lang="en"
-      className={`${inter.className} h-full antialiased`}
-      suppressHydrationWarning
-    >
-      <body className="min-h-full flex flex-col">
-        <TooltipProvider>{children}</TooltipProvider>
-      </body>
-    </html>
-  );
+    return (
+        <html
+            lang="en"
+            className={`${inter.variable} ${jetbrains_mono.variable} h-full antialiased`}
+            suppressHydrationWarning
+        >
+            <body className="min-h-full flex flex-col">
+                <AppProvider>{children}</AppProvider>
+            </body>
+        </html>
+    );
 }
