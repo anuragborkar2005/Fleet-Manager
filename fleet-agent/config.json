@@ -2,6 +2,7 @@
     "server": "http://localhost:8080",
     "agent_port": "8081",
     "metrics_port": "8082",
+    "secret": "e289cb95490b63aa506956ca65e6da6d6e5a9f2d65b6f8caf500854ecbb636c0137ada594a61bd9120f864902999916d8c8f36d95ffb32c595bece41496014ed",
     "heartbeat_interval_seconds": 30,
     "register_timeout_seconds": 10
 }

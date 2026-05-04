@@ -33,7 +33,7 @@ void register_routes(crow::SimpleApp &app, Agent &agent)
           } });
 
     CROW_ROUTE(app, "/info").methods("POST"_method)([&](const crow::request &req)
-                                                    {
+    {
       try {
         auto body = json::parse(req.body);
         std::string hostname = body.value("hostname", "unknown");
@@ -60,15 +60,17 @@ void register_routes(crow::SimpleApp &app, Agent &agent)
     CROW_ROUTE(app, "/api/execute")
         .methods("POST"_method)([&agent](const crow::request &req)
                                 {
-          std::string auth = req.get_header_value("Authorization");
-            if (auth.empty() || !auth.starts_with("Bearer ")) {
-                return crow::response{401, "Unauthorized"};
-            }
-            std::string token = auth.substr(7);
+          // std::string auth = req.get_header_value("Authorization");
+          //   if (auth.empty() || !auth.starts_with("Bearer ")) {
+          //       return crow::response{401, "Unauthorized"};
+          //   }
+          //   std::string token = auth.substr(7);
 
+            /*
             if (!validate_jwt(token, agent.get_jwt())) {
                 return crow::response{401, "Invalid token"};
             }
+            */
 
             auto body = crow::json::load(req.body);
             if (!body) {

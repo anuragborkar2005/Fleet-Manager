@@ -117,19 +117,25 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
     return size * nmemb;
 }
 
-void Agent::register_node()
-{
+void Agent::register_node() {
+    auto cfg = load_config_file("config.json");
     CURL *curl = curl_easy_init();
     if (!curl)
         return;
 
-    std::string url = server + "/api/node/register";
+    std::string url = server + "/api/nodes/register";
     std::string payload = get_node_info();
     std::string response;
 
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, nullptr);
+    struct curl_slist* headers = NULL;
+    headers = curl_slist_append(headers, "Content-Type: application/json");
+    std::string authHeader = "Authorization: Bearer " + std::string(cfg["secret"]);
+
+    headers = curl_slist_append(headers, authHeader.c_str());
+
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
@@ -144,6 +150,9 @@ void Agent::register_node()
             try
             {
                 auto data = json::parse(response);
+                if (data.contains("token")) {
+                    set_token(data["token"]);
+                }
                 std::cout << "[Agent] Registered Successfully\n";
             }
             catch (const json::parse_error &e)
@@ -162,11 +171,13 @@ void Agent::register_node()
     {
         std::cerr << "Curl failed: " << curl_easy_strerror(res) << "\n";
     }
+    curl_slist_free_all(headers);
     curl_easy_cleanup(curl);
 }
 
-void Agent::send_heartbeat()
-{
+void Agent::send_heartbeat() {
+
+    auto cfg = load_config_file("config.json");
     while (active)
     {
         std::this_thread::sleep_for(std::chrono::seconds(heartbeat_interval));
@@ -175,9 +186,22 @@ void Agent::send_heartbeat()
         if (!curl)
             return;
         std::string url = server + "/api/nodes/heartbeat";
+        char hostname[255];
+        gethostname(hostname, sizeof(hostname));
+        json payload;
+        payload["hostname"] = hostname;
+        payload["node_id"] = hostname;
+        std::string payload_str = payload.dump();
 
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, nullptr);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload_str.c_str());
+
+        struct curl_slist* headers = NULL;
+
+        headers = curl_slist_append(headers, "Content-Type: application/json");
+        std::string authHeader = "Authorization: Bearer " + std::string(cfg["secret"]);
+        headers = curl_slist_append(headers, authHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
         CURLcode res = curl_easy_perform(curl);
         if (res == CURLE_OK)
@@ -197,6 +221,7 @@ void Agent::send_heartbeat()
         {
             std::cerr << "Heartbeat Curl failed: " << curl_easy_strerror(res) << "\n";
         }
+        curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
     }
 }
