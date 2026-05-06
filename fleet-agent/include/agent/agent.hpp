@@ -10,6 +10,7 @@ class Agent
 {
 private:
     std::string jwt_token;
+    std::string node_id;
     std::string server;
     std::string secret;
     int port;

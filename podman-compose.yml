@@ -20,6 +20,8 @@ services:
             - "8082:8082"
         volumes:
             - ./fleet-agent/config.json:/app/config.json
+        environment:
+            - FLEET_BACKEND_URL=http://fleet-backend:8080
         depends_on:
             - fleet-backend
 
@@ -33,6 +35,8 @@ services:
             - "9082:8082"
         volumes:
             - ./fleet-agent/config.json:/app/config.json
+        environment:
+            - FLEET_BACKEND_URL=http://fleet-backend:8080
         depends_on:
             - fleet-backend
 

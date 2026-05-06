@@ -7,6 +7,18 @@ Server::Server() {
     if (config.empty()) {
         config = load_config_file("../config.json");
     }
+
+    // Environment overrides
+    if (const char* port_env = std::getenv("FLEET_BACKEND_PORT")) {
+        config["server"]["port"] = std::stoi(port_env);
+    }
+    if (const char* db_path_env = std::getenv("FLEET_DB_PATH")) {
+        config["database"]["path"] = db_path_env;
+    }
+    if (const char* jwt_secret_env = std::getenv("FLEET_JWT_SECRET")) {
+        config["jwt"]["secret"] = jwt_secret_env;
+    }
+
     db = std::make_unique<DBService>(config);
     agent_client = std::make_unique<AgentClient>(config);
     db->init();
