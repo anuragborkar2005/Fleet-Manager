@@ -8,7 +8,10 @@
 DBService::DBService(const nlohmann::json &config) : config_(config) {}
 
 void DBService::init() {
-  std::string db_path = config_["database"]["path"].get<std::string>();
+  std::string db_path = "fleet.db";
+  if (config_.contains("database") && config_["database"].contains("path")) {
+      db_path = config_["database"]["path"].get<std::string>();
+  }
 
   db_ = std::make_unique<SQLite::Database>(db_path, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
   db_->exec("PRAGMA journal_mode=WAL;");

@@ -11,6 +11,7 @@ class Agent
 private:
     std::string jwt_token;
     std::string server;
+    std::string secret;
     int port;
     int metrics_port;
     int heartbeat_interval;

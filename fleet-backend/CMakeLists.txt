@@ -1,16 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 project(fleet-backend LANGUAGES CXX)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-include_directories(include)
-include_directories(src)
-
-file(GLOB_RECURSE HEADER_FILES "include/*hpp")
-file(GLOB_RECURSE CPP_SOURCES "src/*.cpp")
-
 # Enable vcpkg integration automatically
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     if(DEFINED ENV{VCPKG_ROOT})
@@ -21,6 +11,14 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     endif()
 endif()
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(BUILD_SHARED_LIBS OFF)
+
+include_directories(include)
+include_directories(src)
+
 find_package(fmt CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(Crow CONFIG REQUIRED)
@@ -30,10 +28,18 @@ find_package(SQLiteCpp CONFIG REQUIRED)
 find_package(jwt-cpp CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 
+
+file(GLOB_RECURSE HEADER_FILES "include/*hpp")
+file(GLOB_RECURSE CPP_SOURCES "src/*.cpp")
+
+
+
 add_executable(${PROJECT_NAME}
     ${CPP_SOURCES}
     ${HEADER_FILES}
 )
+
+target_link_directories(${PROJECT_NAME} PRIVATE include src)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     fmt::fmt

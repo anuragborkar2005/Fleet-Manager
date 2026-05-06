@@ -4,7 +4,7 @@
 
 json load_config_file(const std::string &filename)
 {
-    std::ifstream config_file{"config.json"};
+    std::ifstream config_file{filename};
     if (!config_file.is_open())
     {
         return json::object();
