@@ -3,7 +3,8 @@
 #include <crow.h>
 #include <iostream>
 
-int main() {
+int main()
+{
     crow::SimpleApp app;
     Agent agent;
 

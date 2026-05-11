@@ -1,6 +1,6 @@
 scrape_configs:
-    - job_name: "fleet-agent"
-      metrics_path: /metrics
-      http_sd_configs:
-          - url: http://localhost:8080/prometheus/sd
-            refresh_interval: 30s
+  - job_name: "fleet-agent"
+    metrics_path: /metrics
+    http_sd_configs:
+      - url: http://fleet-backend:8080/prometheus/sd
+        refresh_interval: 30s

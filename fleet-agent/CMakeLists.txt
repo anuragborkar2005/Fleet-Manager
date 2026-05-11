@@ -15,7 +15,6 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
         CACHE STRING "")
 endif()
 
-find_package(fmt CONFIG REQUIRED)
 find_package(asio CONFIG REQUIRED)
 find_package(Crow CONFIG REQUIRED)
 find_package(CURL CONFIG REQUIRED)
@@ -30,7 +29,6 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    fmt::fmt
     Crow::Crow
     asio::asio
     CURL::libcurl

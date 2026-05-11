@@ -4,10 +4,6 @@
   "builtin-baseline": "4fc6cb0e9ed24f6abfac825f37aa9c74049f566e",
   "dependencies": [
     {
-      "name": "fmt",
-      "version>=": "12.1.0"
-    },
-    {
       "name": "crow",
       "default-features": false,
       "version>=": "1.3.2"

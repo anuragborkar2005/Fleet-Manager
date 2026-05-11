@@ -13,39 +13,6 @@ using json = nlohmann::json;
 void register_routes(crow::SimpleApp &app, Agent &agent)
 {
 
-    CROW_ROUTE(app, "/api/register")
-    ([&]()
-     {
-      agent.start_registration_and_heartbeat();
-      return crow::response{200, "Node Registered"}; });
-
-    CROW_ROUTE(app, "/api/set_heartbeat")
-        .methods("POST"_method)([&](const crow::request &req)
-                                {
-          agent.metrics->incrementHeartbeat();
-
-          try {
-            auto body = json::parse(req.body);
-            std::string hostname = body.value("hostname", "unknown");
-            return crow::response{200, "Heartbeat recorded for " + hostname};
-          } catch (const json::parse_error& e) {
-            return crow::response{400, "Invalid JSON"};
-          } });
-
-    CROW_ROUTE(app, "/info").methods("POST"_method)([&](const crow::request &req)
-    {
-      try {
-        auto body = json::parse(req.body);
-        std::string hostname = body.value("hostname", "unknown");
-        return crow::response{200, "Received Hostname : " + hostname};
-      } catch (const json::parse_error& e) {
-        return crow::response{400, "Invalid JSON"};
-      } });
-
-    CROW_ROUTE(app, "/api/metrics")
-    ([&]()
-     { return crow::response{200, "Metrics not implemented"}; });
-
     CROW_ROUTE(app, "/api/status")
     ([&]()
      {

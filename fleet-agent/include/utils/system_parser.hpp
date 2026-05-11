@@ -13,6 +13,19 @@ namespace SystemParser
     std::string OperatingSystem();
     std::string Kernel();
     std::string UserByID(int);
-    std::vector<std::string> CpuUtilization();
-
+    struct MemoryInfo
+    {
+        long total;
+        long free;
+        long available;
+        long buffers;
+        long cached;
+        long swap_total;
+        long swap_free;
+    };
+    MemoryInfo DetailedMemory();
+    std::vector<double> CpuUtilization();
+    std::tuple<double, double, double, int, int, int> LoadAvg();
+    std::vector<long> CpuStats();
+    int TotalCpuCores();
 }

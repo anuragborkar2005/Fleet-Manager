@@ -275,6 +275,10 @@ void Agent::send_heartbeat()
 
 void Agent::start_registration_and_heartbeat()
 {
+    if (started.exchange(true))
+    {
+        return;
+    }
     register_node();
     std::thread heartbeat_thread(&Agent::send_heartbeat, this);
     heartbeat_thread.detach();

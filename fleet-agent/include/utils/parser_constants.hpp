@@ -7,6 +7,7 @@ namespace ParserConstants
     constexpr std::string ProcDirectory{"/proc"};
     constexpr std::string CmdLineFilename{"/cmdline"};
     constexpr std::string CpuInfo{"/cpuinfo"};
+    constexpr std::string LoadAvgFilename{"/loadavg"};
     constexpr std::string StatusFile{"/status"};
     constexpr std::string StatFilename{"/stat"};
     constexpr std::string UptimeFilename{"/uptime"};
@@ -21,6 +22,7 @@ namespace ParserConstants
     constexpr std::string FilterMemFree{"MemFree:"};
     constexpr std::string FilterMemAvailable{"MemAvailable:"};
     constexpr std::string FilterCPU{"cpu"};
+    constexpr std::string FilterCpuCores{"cpu cores:"};
     constexpr std::string FilterUID{"Uid:"};
     constexpr std::string FilterProcMem{"VmData:"};
 }

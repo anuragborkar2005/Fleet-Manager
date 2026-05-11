@@ -1,0 +1,71 @@
+services:
+  fleet-backend:
+    image: localhost/fleet-backend:latest
+    build:
+      context: ./fleet-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./fleet-backend/config.json:/app/config.json
+    environment:
+      - NODE_ENV=production
+
+  fleet-agent-node1:
+    image: localhost/fleet-agent:latest
+    build:
+      context: ./fleet-agent
+    hostname: node-1
+    ports:
+      - "8081:8081"
+      - "8082:8082"
+    volumes:
+      - ./fleet-agent/config.json:/app/config.json
+    environment:
+      - FLEET_BACKEND_URL=http://fleet-backend:8080
+    depends_on:
+      - fleet-backend
+
+  fleet-agent-node2:
+    image: localhost/fleet-agent:latest
+    build:
+      context: ./fleet-agent
+    hostname: node-2
+    ports:
+      - "9081:8081"
+      - "9082:8082"
+    volumes:
+      - ./fleet-agent/config.json:/app/config.json
+    environment:
+      - FLEET_BACKEND_URL=http://fleet-backend:8080
+    depends_on:
+      - fleet-backend
+
+  fleet-ui:
+    image: localhost/fleet-ui:latest
+    build:
+      context: ./fleet-ui
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+    depends_on:
+      - fleet-backend
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - fleet-backend
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    depends_on:
+      - prometheus

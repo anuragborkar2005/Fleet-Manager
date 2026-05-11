@@ -17,6 +17,7 @@ private:
     int metrics_port;
     int heartbeat_interval;
     std::atomic<bool> active{true};
+    std::atomic<bool> started{false};
     std::mutex mtx;
 
     void register_node();
