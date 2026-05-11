@@ -14,7 +14,7 @@ namespace ParserHelper
     T GetValueByKey(const std::string &filter, const std::string &filename)
     {
         std::string line, key;
-        T value;
+        T value{};
 
         std::ifstream filestream{ParserConstants::ProcDirectory + filename};
         if (filestream.is_open())
@@ -24,7 +24,10 @@ namespace ParserHelper
                 std::istringstream linestream{line};
                 if (linestream >> key >> value)
                 {
-                    return value;
+                    if (key == filter)
+                    {
+                        return value;
+                    }
                 }
             }
         }
@@ -35,7 +38,7 @@ namespace ParserHelper
     T GetValue(const std::string &filename)
     {
         std::string line;
-        T value;
+        T value{};
 
         std::ifstream filestream{ParserConstants::ProcDirectory + filename};
         if (filestream.is_open())

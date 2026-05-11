@@ -16,9 +16,10 @@ namespace ParserConstants
     constexpr std::string PasswordPath{"/etc/passwd"};
 
     constexpr std::string FilterProcesses{"processes"};
-    constexpr std::string FilterRuningProcesses{"procs_running"};
+    constexpr std::string FilterRunningProcesses{"procs_running"};
     constexpr std::string FilterMemTotal{"MemTotal:"};
     constexpr std::string FilterMemFree{"MemFree:"};
+    constexpr std::string FilterMemAvailable{"MemAvailable:"};
     constexpr std::string FilterCPU{"cpu"};
     constexpr std::string FilterUID{"Uid:"};
     constexpr std::string FilterProcMem{"VmData:"};

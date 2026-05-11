@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <fstream>
 #include <filesystem>
+#include <iostream>
 #include <sstream>
 
 std::string SystemParser::OperatingSystem()
@@ -82,9 +83,11 @@ long SystemParser::UpTime()
 float SystemParser::MemoryUtilization()
 {
     float memTotal = ParserHelper::GetValueByKey<int>(ParserConstants::FilterMemTotal, ParserConstants::MemInfoFilename);
-    float memFree = ParserHelper::GetValueByKey<int>(ParserConstants::FilterMemFree, ParserConstants::MemInfoFilename);
-    float memory = (memTotal - memFree) / memTotal;
-    return memory;
+    float memAvailable = ParserHelper::GetValueByKey<int>(
+        ParserConstants::FilterMemAvailable, ParserConstants::MemInfoFilename);
+
+    if (memTotal == 0) return 0.0;
+    return (memTotal - memAvailable) / memTotal;
 }
 
 std::vector<int> SystemParser::Pids()
@@ -112,5 +115,5 @@ int SystemParser::TotalProcesses()
 
 int SystemParser::RunningProcesses()
 {
-    return ParserHelper::GetValueByKey<int>(ParserConstants::FilterRuningProcesses, ParserConstants::StatFilename);
+    return ParserHelper::GetValueByKey<int>(ParserConstants::FilterRunningProcesses, ParserConstants::StatFilename);
 }

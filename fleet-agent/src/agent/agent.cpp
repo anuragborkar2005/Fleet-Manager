@@ -26,52 +26,63 @@ void Agent::load_config()
     auto cfg = load_config_file("config.json");
     if (cfg.empty())
     {
-        // Try one level up if not found in current dir
         cfg = load_config_file("../config.json");
     }
 
-    // Set defaults first
     server = "http://localhost:8080";
     heartbeat_interval = 30;
     port = 8080;
     metrics_port = 8082;
     secret = "";
 
-    if (!cfg.empty()) {
-        try {
+    if (!cfg.empty())
+    {
+        try
+        {
             server = cfg.value("server", server);
             heartbeat_interval = cfg.value("heartbeat_interval_seconds", heartbeat_interval);
             secret = cfg.value("secret", secret);
 
-            if (cfg.contains("agent_port")) {
+            if (cfg.contains("agent_port"))
+            {
                 auto val = cfg["agent_port"];
-                if (val.is_string()) {
+                if (val.is_string())
+                {
                     port = std::stoi(val.get<std::string>());
-                } else if (val.is_number()) {
+                }
+                else if (val.is_number())
+                {
                     port = val.get<int>();
                 }
             }
 
-            if (cfg.contains("metrics_port")) {
+            if (cfg.contains("metrics_port"))
+            {
                 auto val = cfg["metrics_port"];
-                if (val.is_string()) {
+                if (val.is_string())
+                {
                     metrics_port = std::stoi(val.get<std::string>());
-                } else if (val.is_number()) {
+                }
+                else if (val.is_number())
+                {
                     metrics_port = val.get<int>();
                 }
             }
-        } catch (const std::exception &e) {
+        }
+        catch (const std::exception &e)
+        {
             std::cerr << "[Agent] Error parsing config: " << e.what() << ". Using defaults.\n";
         }
     }
 
-    // Environment overrides
-    if (const char* env_server = std::getenv("FLEET_BACKEND_URL")) {
+    if (const char *env_server = std::getenv("FLEET_BACKEND_URL"))
+    {
         server = env_server;
         std::cout << "[Agent] Using server URL from environment: " << server << "\n";
     }
 
-    if (const char* env_port = std::getenv("FLEET_AGENT_PORT")) {
+    if (const char *env_port = std::getenv("FLEET_AGENT_PORT"))
+    {
         port = std::stoi(env_port);
     }
 
@@ -103,13 +114,14 @@ std::string Agent::get_node_info()
         if (ifa->ifa_addr && ifa->ifa_addr->sa_family == AF_INET &&
             (std::string(ifa->ifa_name) == "eth0" ||
              std::string(ifa->ifa_name) == "enp0s3" ||
-             std::string(ifa->ifa_name) == "lo")) // Adding lo as fallback for dev
+             std::string(ifa->ifa_name) == "lo"))
         {
             char ip[INET_ADDRSTRLEN];
             inet_ntop(AF_INET, &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr, ip,
                       sizeof(ip));
             cfg["ip"] = ip;
-            if (std::string(ifa->ifa_name) != "lo") break;
+            if (std::string(ifa->ifa_name) != "lo")
+                break;
         }
     }
 
@@ -125,11 +137,14 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
     return size * nmemb;
 }
 
-void Agent::register_node() {
+void Agent::register_node()
+{
     bool registered = false;
-    while (!registered && active) {
+    while (!registered && active)
+    {
         CURL *curl = curl_easy_init();
-        if (!curl) {
+        if (!curl)
+        {
             std::this_thread::sleep_for(std::chrono::seconds(5));
             continue;
         }
@@ -140,10 +155,11 @@ void Agent::register_node() {
 
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
-        struct curl_slist* headers = NULL;
+        struct curl_slist *headers = NULL;
         headers = curl_slist_append(headers, "Content-Type: application/json");
-        
-        if (!secret.empty()) {
+
+        if (!secret.empty())
+        {
             std::string authHeader = "Authorization: Bearer " + secret;
             headers = curl_slist_append(headers, authHeader.c_str());
         }
@@ -163,10 +179,12 @@ void Agent::register_node() {
                 try
                 {
                     auto data = json::parse(response);
-                    if (data.contains("jwt")) {
+                    if (data.contains("jwt"))
+                    {
                         set_token(data["jwt"]);
                     }
-                    if (data.contains("node_id")) {
+                    if (data.contains("node_id"))
+                    {
                         node_id = data["node_id"].get<std::string>();
                         std::cout << "[Agent] Registered Successfully. Node ID: " << node_id << "\n";
                         registered = true;
@@ -189,19 +207,22 @@ void Agent::register_node() {
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
 
-        if (!registered) {
+        if (!registered)
+        {
             std::cout << "[Agent] Retrying registration in 5 seconds...\n";
             std::this_thread::sleep_for(std::chrono::seconds(5));
         }
     }
 }
 
-void Agent::send_heartbeat() {
+void Agent::send_heartbeat()
+{
     while (active)
     {
         std::this_thread::sleep_for(std::chrono::seconds(heartbeat_interval));
 
-        if (node_id.empty()) {
+        if (node_id.empty())
+        {
             std::cerr << "[Agent] Skipping heartbeat: Node not registered yet\n";
             continue;
         }
@@ -210,7 +231,7 @@ void Agent::send_heartbeat() {
         if (!curl)
             continue;
         std::string url = server + "/api/nodes/heartbeat";
-        
+
         json payload;
         payload["node_id"] = node_id;
         std::string payload_str = payload.dump();
@@ -218,10 +239,11 @@ void Agent::send_heartbeat() {
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload_str.c_str());
 
-        struct curl_slist* headers = NULL;
+        struct curl_slist *headers = NULL;
 
         headers = curl_slist_append(headers, "Content-Type: application/json");
-        if (!jwt_token.empty()) {
+        if (!jwt_token.empty())
+        {
             std::string authHeader = "Authorization: Bearer " + jwt_token;
             headers = curl_slist_append(headers, authHeader.c_str());
         }
@@ -235,6 +257,7 @@ void Agent::send_heartbeat() {
             if (http_code == 200)
             {
                 std::cout << "[Agent] Heartbeat sent for Node ID: " << node_id << "\n";
+                metrics->incrementHeartbeat();
             }
             else
             {
