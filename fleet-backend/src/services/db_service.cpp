@@ -72,7 +72,7 @@ void DBService::update_heartbeat(const std::string &node_id) {
 
 std::vector<nlohmann::json> DBService::get_active_nodes() {
     std::vector<nlohmann::json> nodes;
-    SQLite::Statement query(*db_, "SELECT id, hostname, ip, os, agent_version, specs FROM nodes WHERE last_heartbeat > datetime('now', '-5 minutes')");
+    SQLite::Statement query(*db_, "SELECT id, hostname, ip, os, agent_version, specs, last_heartbeat FROM nodes");
 
     while (query.executeStep()) {
         nlohmann::json node;
@@ -82,6 +82,18 @@ std::vector<nlohmann::json> DBService::get_active_nodes() {
         node["os"] = query.getColumn(3).getText();
         node["agent_version"] = query.getColumn(4).getText();
         node["specs"] = nlohmann::json::parse(query.getColumn(5).getText());
+        
+        // Calculate status based on heartbeat
+        std::string last_heartbeat = query.getColumn(6).getText();
+        SQLite::Statement time_query(*db_, "SELECT 1 WHERE datetime(?) > datetime('now', '-5 minutes')");
+        time_query.bind(1, last_heartbeat);
+        
+        if (time_query.executeStep()) {
+            node["status"] = "online";
+        } else {
+            node["status"] = "offline";
+        }
+        
         nodes.push_back(node);
     }
     return nodes;

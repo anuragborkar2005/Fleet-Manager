@@ -40,7 +40,7 @@ void register_nodes_routes(crow::App<crow::CORSHandler>& app, AgentClient& agent
             res[i]["ip"] = nodes[i].value("ip", "0.0.0.0");
             res[i]["os"] = nodes[i].value("os", "linux");
             res[i]["agent_version"] = nodes[i].value("agent_version", "1.0.0");
-            res[i]["status"] = "online";
+            res[i]["status"] = nodes[i].value("status", "offline");
         }
 
         return crow::response{200, res};

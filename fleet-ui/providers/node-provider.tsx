@@ -22,6 +22,8 @@ export function NodeProvider({ children }: { children: ReactNode }) {
             try {
                 const response = await api.get("/api/nodes");
                 setNodes(response.data);
+                
+                // Set initial nodeId if not set
                 if (response.data.length > 0 && !nodeId) {
                     setNodeId(response.data[0].id);
                 }
@@ -29,8 +31,12 @@ export function NodeProvider({ children }: { children: ReactNode }) {
                 console.error("Failed to fetch nodes:", error);
             }
         };
+
         fetchNodes();
-    }, [nodeId]);
+        const interval = setInterval(fetchNodes, 5000);
+
+        return () => clearInterval(interval);
+    }, [nodeId]); // Keep nodeId to re-trigger if it's cleared, but interval handles updates
 
     return (
         <NodeContext.Provider value={{ nodeId, nodes, setNodeId }}>
