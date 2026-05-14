@@ -3,7 +3,6 @@ export type Node = {
     hostname: string;
     ip: string;
     status: string;
-    cpu_usage: number;
-    ram_usage: number;
-    uptime: number;
+    os: string;
+    agent_version: string;
 };

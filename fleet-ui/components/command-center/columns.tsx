@@ -45,15 +45,11 @@ export const columns: ColumnDef<Node>[] = [
         header: "Status",
     },
     {
-        accessorKey: "cpu_usage",
-        header: "CPU Usage",
+        accessorKey: "os",
+        header: "Operating System",
     },
     {
-        accessorKey: "ram_usage",
-        header: "RAM Usage",
-    },
-    {
-        accessorKey: "uptime",
-        header: "Uptime",
+        accessorKey: "agent_version",
+        header: "Agent Version",
     },
 ];

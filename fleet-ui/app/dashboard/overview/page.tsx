@@ -19,9 +19,8 @@ export default function OverviewPage() {
                     hostname: node.hostname,
                     ip: node.ip,
                     status: node.status,
-                    cpu_usage: 0,
-                    ram_usage: 0,
-                    uptime: 0,
+                    os: node.os,
+                    agent_version: node.agent_version,
                 }));
                 setNodes(mappedNodes);
             } catch (error) {
