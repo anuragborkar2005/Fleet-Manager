@@ -33,17 +33,19 @@ void register_nodes_routes(crow::App<crow::CORSHandler>& app, AgentClient& agent
     ([&db](const crow::request &) {
         auto nodes = db.get_active_nodes();
 
-        crow::json::wvalue res = crow::json::wvalue(crow::json::type::List);
-        for (size_t i = 0; i < nodes.size(); ++i) {
-            res[i]["id"] = nodes[i].value("id", "");
-            res[i]["hostname"] = nodes[i].value("hostname", "unknown");
-            res[i]["ip"] = nodes[i].value("ip", "0.0.0.0");
-            res[i]["os"] = nodes[i].value("os", "linux");
-            res[i]["agent_version"] = nodes[i].value("agent_version", "1.0.0");
-            res[i]["status"] = nodes[i].value("status", "offline");
+        std::vector<crow::json::wvalue> res_list;
+        for (const auto& node : nodes) {
+            crow::json::wvalue node_json;
+            node_json["id"] = node.value("id", "");
+            node_json["hostname"] = node.value("hostname", "unknown");
+            node_json["ip"] = node.value("ip", "0.0.0.0");
+            node_json["os"] = node.value("os", "linux");
+            node_json["agent_version"] = node.value("agent_version", "1.0.0");
+            node_json["status"] = node.value("status", "offline");
+            res_list.push_back(std::move(node_json));
         }
 
-        return crow::response{200, res};
+        return crow::response{200, crow::json::wvalue(std::move(res_list))};
     });
 
     CROW_ROUTE(app, "/api/nodes/heartbeat")

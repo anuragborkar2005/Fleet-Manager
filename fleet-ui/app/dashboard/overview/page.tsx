@@ -25,7 +25,7 @@ export default function OverviewPage() {
             </section>
             <section>
                 <div>
-                    <span className="text-xl font-semibold text-primary-background">
+                    <span className="text-xl font-semibold text-primary">
                         Node Overview
                     </span>
                 </div>

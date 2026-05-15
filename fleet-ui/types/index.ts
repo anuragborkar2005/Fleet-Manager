@@ -5,4 +5,7 @@ export type Node = {
     status: string;
     os: string;
     agent_version: string;
+    cpu_usage?: number;
+    ram_usage?: number;
+    uptime?: number;
 };

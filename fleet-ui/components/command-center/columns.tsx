@@ -1,15 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-
-export type Node = {
-    hostname: string;
-    ip: string;
-    status: string;
-    cpu_usage: number;
-    ram_usage: number;
-    uptime: number;
-};
+import { Node } from "@/types";
 
 export const columns: ColumnDef<Node>[] = [
     {

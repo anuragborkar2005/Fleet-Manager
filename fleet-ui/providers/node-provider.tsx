@@ -21,11 +21,12 @@ export function NodeProvider({ children }: { children: ReactNode }) {
         const fetchNodes = async () => {
             try {
                 const response = await api.get("/api/nodes");
-                setNodes(response.data);
+                const data = Array.isArray(response.data) ? response.data : [];
+                setNodes(data);
                 
                 // Set initial nodeId if not set
-                if (response.data.length > 0 && !nodeId) {
-                    setNodeId(response.data[0].id);
+                if (data.length > 0 && !nodeId) {
+                    setNodeId(data[0].id);
                 }
             } catch (error) {
                 console.error("Failed to fetch nodes:", error);

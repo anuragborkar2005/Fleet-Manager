@@ -4,13 +4,12 @@ import { useEffect, useState, useRef } from "react";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Node } from "@/types";
 import {
     DeleteIcon,
     DollarSign,
-    HistoryIcon,
     Keyboard,
     PlayIcon,
-    SquareStopIcon,
 } from "lucide-react";
 
 interface HistoryItem {
@@ -20,7 +19,7 @@ interface HistoryItem {
 }
 
 export default function CommandCenterPage() {
-    const [nodes, setNodes] = useState<any[]>([]);
+    const [nodes, setNodes] = useState<Node[]>([]);
     const [selectedNodeId, setSelectedNodeId] = useState<string>("");
     const [input, setInput] = useState<string>("");
     const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -31,9 +30,10 @@ export default function CommandCenterPage() {
         const fetchNodes = async () => {
             try {
                 const response = await api.get("/api/nodes");
-                setNodes(response.data);
-                if (response.data.length > 0 && !selectedNodeId) {
-                    setSelectedNodeId(response.data[0].id);
+                const data = Array.isArray(response.data) ? response.data : [];
+                setNodes(data);
+                if (data.length > 0) {
+                    setSelectedNodeId(prev => prev || data[0].id);
                 }
             } catch (error) {
                 console.error("Failed to fetch nodes:", error);
@@ -70,8 +70,18 @@ export default function CommandCenterPage() {
             if (!response.data.stdout && !response.data.stderr) {
               setHistory(prev => [...prev, { type: "output", content: "(No output)" }]);
             }
-        } catch (error: any) {
-            const errorMsg = error.response?.data?.error || error.message || "Execution failed";
+        } catch (error: unknown) {
+            let errorMsg = "Execution failed";
+            if (error instanceof Error) {
+                errorMsg = error.message;
+            }
+            // Handle axios error specifically if needed, but for simplicity:
+            if (typeof error === 'object' && error !== null && 'response' in error) {
+                const axiosError = error as { response: { data: { error?: string } } };
+                if (axiosError.response?.data?.error) {
+                    errorMsg = axiosError.response.data.error;
+                }
+            }
             setHistory(prev => [...prev, { type: "error", content: errorMsg }]);
         } finally {
             setIsExecuting(false);

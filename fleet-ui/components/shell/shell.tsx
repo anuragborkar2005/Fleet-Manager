@@ -47,8 +47,17 @@ export function Shell({ title, nodeId }: ShellProps) {
                     if (!response.data.stdout && !response.data.stderr) {
                       setHistory(prev => [...prev, { type: "output", content: "(No output)" }]);
                     }
-                } catch (error: any) {
-                    const errorMsg = error.response?.data?.error || error.message || "Execution failed";
+                } catch (error: unknown) {
+                    let errorMsg = "Execution failed";
+                    if (error instanceof Error) {
+                        errorMsg = error.message;
+                    }
+                    if (typeof error === 'object' && error !== null && 'response' in error) {
+                        const axiosError = error as { response: { data: { error?: string } } };
+                        if (axiosError.response?.data?.error) {
+                            errorMsg = axiosError.response.data.error;
+                        }
+                    }
                     setHistory(prev => [...prev, { type: "error", content: errorMsg }]);
                 } finally {
                     setIsExecuting(false);
