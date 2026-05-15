@@ -1,6 +1,10 @@
+networks:
+  monitoring:
+    driver: bridge
+
 services:
   fleet-backend:
-    image: localhost/fleet-backend:latest
+    image: fleet-backend:latest
     build:
       context: ./fleet-backend
     ports:
@@ -9,9 +13,11 @@ services:
       - ./fleet-backend/config.json:/app/config.json
     environment:
       - NODE_ENV=production
+    networks:
+      - monitoring
 
   fleet-agent-node1:
-    image: localhost/fleet-agent:latest
+    image: fleet-agent:latest
     build:
       context: ./fleet-agent
     hostname: node-1
@@ -24,9 +30,11 @@ services:
       - FLEET_BACKEND_URL=http://fleet-backend:8080
     depends_on:
       - fleet-backend
+    networks:
+      - monitoring
 
   fleet-agent-node2:
-    image: localhost/fleet-agent:latest
+    image: fleet-agent:latest
     build:
       context: ./fleet-agent
     hostname: node-2
@@ -39,17 +47,21 @@ services:
       - FLEET_BACKEND_URL=http://fleet-backend:8080
     depends_on:
       - fleet-backend
+    networks:
+      - monitoring
 
   fleet-ui:
-    image: localhost/fleet-ui:latest
+    image: fleet-ui:latest
     build:
       context: ./fleet-ui
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8080
     ports:
       - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8080
     depends_on:
       - fleet-backend
+    networks:
+      - monitoring
 
   prometheus:
     image: prom/prometheus:latest
@@ -59,6 +71,8 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     depends_on:
       - fleet-backend
+    networks:
+      - monitoring
 
   grafana:
     image: grafana/grafana:latest
@@ -69,3 +83,5 @@ services:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
     depends_on:
       - prometheus
+    networks:
+      - monitoring
