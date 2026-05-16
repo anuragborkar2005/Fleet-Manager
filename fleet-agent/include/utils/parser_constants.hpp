@@ -15,6 +15,8 @@ namespace ParserConstants
     constexpr std::string VersionFilename{"/version"};
     constexpr std::string OsPath{"/etc/os-release"};
     constexpr std::string PasswordPath{"/etc/passwd"};
+    constexpr std::string NetDevFilename{"/net/dev"};
+    constexpr std::string DiskStatsFilename{"/diskstats"};
 
     constexpr std::string FilterProcesses{"processes"};
     constexpr std::string FilterRunningProcesses{"procs_running"};

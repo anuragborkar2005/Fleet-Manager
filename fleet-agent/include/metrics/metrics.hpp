@@ -22,7 +22,7 @@ private:
 
     System system;
     Disk disk{"sda", "/"};
-    Network network{"eth0"};
+    Network network{"enp0s3"};
 
     Counter *heartbeat_counter;
     Gauge *cpu_usage_gauge;

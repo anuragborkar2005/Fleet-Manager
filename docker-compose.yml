@@ -16,40 +16,6 @@ services:
     networks:
       - monitoring
 
-  fleet-agent-node1:
-    image: fleet-agent:latest
-    build:
-      context: ./fleet-agent
-    hostname: node-1
-    ports:
-      - "8081:8081"
-      - "8082:8082"
-    volumes:
-      - ./fleet-agent/config.json:/app/config.json
-    environment:
-      - FLEET_BACKEND_URL=http://fleet-backend:8080
-    depends_on:
-      - fleet-backend
-    networks:
-      - monitoring
-
-  fleet-agent-node2:
-    image: fleet-agent:latest
-    build:
-      context: ./fleet-agent
-    hostname: node-2
-    ports:
-      - "9081:8081"
-      - "9082:8082"
-    volumes:
-      - ./fleet-agent/config.json:/app/config.json
-    environment:
-      - FLEET_BACKEND_URL=http://fleet-backend:8080
-    depends_on:
-      - fleet-backend
-    networks:
-      - monitoring
-
   fleet-ui:
     image: fleet-ui:latest
     build:

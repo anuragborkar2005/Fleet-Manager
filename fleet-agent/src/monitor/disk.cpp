@@ -1,4 +1,5 @@
 #include "monitor/disk.hpp"
+#include "utils/parser_constants.hpp"
 #include <fstream>
 #include <sstream>
 #include <sys/statvfs.h>
@@ -13,7 +14,7 @@ Disk::Disk(const std::string &device, const std::string &mountPoint)
 
 void Disk::updateIO()
 {
-    std::ifstream file("/proc/diskstats");
+    std::ifstream file(ParserConstants::ProcDirectory + ParserConstants::DiskStatsFilename);
     std::string line;
     while (std::getline(file, line))
     {

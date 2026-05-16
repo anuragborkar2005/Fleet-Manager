@@ -1,4 +1,5 @@
 #include "monitor/network.hpp"
+#include "utils/parser_constants.hpp"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -7,10 +8,10 @@ Network::Network(const std::string &iface) : iface_(iface) {}
 
 void Network::update()
 {
-    std::ifstream file("/proc/net/dev");
+    std::ifstream file(ParserConstants::ProcDirectory + ParserConstants::NetDevFilename);
     if (!file.is_open())
     {
-        std::cerr << "Error: cannot open /proc/net/dev\n";
+        std::cerr << "Error: cannot open " << ParserConstants::ProcDirectory + ParserConstants::NetDevFilename << "\n";
         return;
     }
 
